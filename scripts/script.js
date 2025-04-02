@@ -4,9 +4,10 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiYm9zdG9uc2FtNjE3IiwiYSI6ImNtODNlbnBoNzFvaTcyd
 // Initialize the map
 const map = new mapboxgl.Map({
     container: 'map',
+    hash: true,
     style: 'mapbox://styles/mapbox/light-v11',
-    center: [-71.0627, 42.3522], // Center on US
-    zoom: 15,
+    center: [-71.061147, 42.349867], // Center on US
+    zoom: 16,
     cursor: 'grab' // Set default cursor to grab
 });
 
