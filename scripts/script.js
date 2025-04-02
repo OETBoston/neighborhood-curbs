@@ -8,6 +8,7 @@ const map = new mapboxgl.Map({
     style: 'mapbox://styles/mapbox/light-v11',
     center: [-71.061147, 42.349867], // Center on US
     zoom: 16,
+    attributionControl: false,
     cursor: 'grab' // Set default cursor to grab
 });
 
