@@ -145,7 +145,7 @@ body {
 .legend-item {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    padding: 5px;
     cursor: pointer;
 }
 
