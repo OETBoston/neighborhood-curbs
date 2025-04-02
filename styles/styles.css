@@ -138,8 +138,8 @@ body {
 .legend {
     margin-top: 10px;
     border-top: 1px solid #ddd;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .legend-item {
