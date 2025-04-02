@@ -11,6 +11,19 @@ const map = new mapboxgl.Map({
     cursor: 'grab' // Set default cursor to grab
 });
 
+map.addControl(
+  new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+    mapboxgl: mapboxgl,
+    bbox: [-71.190336,42.240688,-70.985076,42.393463],
+    proximity: {
+      longitude: -71.080463,
+      latitude: 42.330631
+    },
+    placeholder: 'Search by address'
+  }), 'top-left'
+);
+
 // Map on load event
 map.on('load', function() {
     console.log('Map loaded successfully');
