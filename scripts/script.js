@@ -10,11 +10,379 @@ const map = new mapboxgl.Map({
     cursor: 'grab' // Set default cursor to grab
 });
 
-// Add your JavaScript functionality here
-// For example:
-
 // Map on load event
 map.on('load', function() {
     console.log('Map loaded successfully');
     document.getElementById('status-info').textContent = 'Ready to load data';
+
+    // Automatically load data when map is ready
+    loadAndRenderAllData();
 });
+
+
+// Define your environment
+const isLocalDevelopment = true; // Change to false before publishing to GitHub
+
+// Define your data paths
+const localPointDataPath = './data/regulations_categorized.geojson';
+const locallinesegmentDataPath = './data/labeled_curbs.geojson';
+const publishedPointDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/regulations_categorized.geojson';
+const publishedlinesegmentDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/labeled_curbs.geojson';
+
+// Your function to load point data
+async function loadPointData() {
+  // Choose the right path based on environment
+  const pointDataPath = isLocalDevelopment ? localPointDataPath : publishedPointDataPath;
+  
+  try {
+    const response = await fetch(pointDataPath);
+    if (!response.ok) {
+      throw new Error(`Failed to load point data: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error loading point data:', error);
+    // Either rethrow the error
+    throw error;
+    // OR return a default/empty value
+    // return [];
+  }
+}
+
+// Your function to load line segment data
+async function loadLineSegmentData() {
+  // Choose the right path based on environment
+  const lineSegmentDataPath = isLocalDevelopment ? localLineSegmentDataPath : publishedLineSegmentDataPath;
+  
+  try {
+    const response = await fetch(lineSegmentDataPath);
+    if (!response.ok) {
+      throw new Error(`Failed to load line segment data: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error loading line segment data:', error);
+    // Either rethrow the error
+    throw error;
+    // OR return a default/empty value
+    // return [];
+  }
+}
+
+// Function to map regulation types to colors (if not already defined in sign properties)
+        function getColorForRegulationType(regulationType) {
+            // Create a mapping of regulation types to your professional colors
+            const regulationColorMap = {
+                '2 Hour Parking': '#e15759',
+                'No Stopping': '#f28e2c',
+                'Other': '#4e79a7',
+                'ParkBoston/Metered': '#af7aa1',
+                'Resident Parking': '#76b7b2',
+                'Street Cleaning': '#ff9da7',
+                'Tow Zone': '#9c755f',
+                'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52',
+                'nan': '#bab0ab'
+                // Add more mappings as needed
+            };
+
+            return regulationColorMap[regulationType] || '#4e79a7'; // Return the color or default
+        }
+
+        // Fix for the cleanControlCharacters function
+        function cleanControlCharacters(geojsonData) {
+          // Make a deep copy to avoid modifying the original
+          const cleanedData = JSON.parse(JSON.stringify(geojsonData));
+          
+          // Process each feature
+          cleanedData.features.forEach(feature => {
+            if (feature.properties) {
+              // Clean regulation_type if it exists
+              if (feature.properties.regulation_type) {
+                feature.properties.regulation_type = 
+                  feature.properties.regulation_type.replace(/[\u0000-\u001F]/g, '');
+              }
+              
+              // Clean mutcd_description if it exists
+              if (feature.properties.mutcd_description) {
+                feature.properties.mutcd_description = 
+                  feature.properties.mutcd_description.replace(/[\u0000-\u001F]/g, '');
+              }
+            }
+          });
+          
+          return cleanedData; // Fixed: return the cleaned data
+        }
+
+
+
+        // Sequence in your render function
+                async function renderPointsOnMap(map, pointData = null, options = {}) {
+                  if (!pointData) {
+                    try {
+                      // Step 1-2: Fetch data and wait for it
+                      const rawData = await loadPointData();
+                      
+                      // Step 3: Clean data (synchronous operation)
+                      pointData = cleanPointData(rawData);
+                    } catch (error) {
+                      console.error('Failed to load or clean point data:', error);
+                      return [];
+                    }
+                  }
+                  
+                  // Step 4: Render the data
+                  // ...rendering code...
+                }
+
+        // Complete implementation of renderPointsOnMap
+        async function renderPointsOnMap(map, pointData = null, options = {}) {
+          // Default options
+          const defaultOptions = {
+            sourceId: 'points-source',
+            layerId: 'points-layer',
+            markerRadius: 5,
+            markerOpacity: 0.8,
+            popupEnabled: true
+          };
+          
+          // Merge default options with provided options
+          const renderOptions = { ...defaultOptions, ...options };
+          
+          if (!pointData) {
+            try {
+              // Step 1-2: Fetch data and wait for it
+              const rawData = await loadPointData();
+              
+              // Step 3: Clean data
+              pointData = cleanControlCharacters(rawData);
+            } catch (error) {
+              console.error('Failed to load or clean point data:', error);
+              document.getElementById('status-info').textContent = 'Error loading point data';
+              return;
+            }
+          }
+          
+          // Step 4: Add the data source if it doesn't exist
+          if (!map.getSource(renderOptions.sourceId)) {
+            map.addSource(renderOptions.sourceId, {
+              type: 'geojson',
+              data: pointData
+            });
+          } else {
+            // Update the data if the source already exists
+            map.getSource(renderOptions.sourceId).setData(pointData);
+          }
+          
+          // Step 5: Add the layer if it doesn't exist
+          if (!map.getLayer(renderOptions.layerId)) {
+            map.addLayer({
+              id: renderOptions.layerId,
+              type: 'circle',
+              source: renderOptions.sourceId,
+              paint: {
+                'circle-radius': renderOptions.markerRadius,
+                'circle-color': [
+                  'match',
+                  ['get', 'regulation_type'],
+                  '2 Hour Parking', '#e15759',
+                  'No Stopping', '#f28e2c',
+                  'ParkBoston/Metered', '#af7aa1',
+                  'Resident Parking', '#76b7b2',
+                  'Street Cleaning', '#ff9da7',
+                  'Tow Zone', '#9c755f',
+                  'Tow Zone: Street Cleaning/Snow Emergency', '#e7ba52',
+                  // Default color
+                  '#4e79a7'
+                ],
+                'circle-opacity': renderOptions.markerOpacity,
+                'circle-stroke-width': 1,
+                'circle-stroke-color': '#ffffff'
+              }
+            });
+            
+            // If popups are enabled, add click event
+            if (renderOptions.popupEnabled) {
+              // Create a popup but don't add it to the map yet
+              const popup = new mapboxgl.Popup({
+                closeButton: true,
+                closeOnClick: true
+              });
+              
+              // When a click event occurs on a feature in the points layer, open a popup
+              map.on('click', renderOptions.layerId, (e) => {
+                if (e.features.length === 0) return;
+                
+                const feature = e.features[0];
+                const coordinates = feature.geometry.coordinates.slice();
+                const properties = feature.properties;
+                
+                // Format popup content
+                let popupContent = `<h3>${properties.regulation_type || 'Regulation'}</h3>`;
+                if (properties.mutcd_description) {
+                  popupContent += `<p>${properties.mutcd_description}</p>`;
+                }
+                if (properties.description) {
+                  popupContent += `<p>${properties.description}</p>`;
+                }
+                
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+                
+                popup
+                  .setLngLat(coordinates)
+                  .setHTML(popupContent)
+                  .addTo(map);
+              });
+              
+              // Change the cursor to a pointer when hovering over the points layer
+              map.on('mouseenter', renderOptions.layerId, () => {
+                map.getCanvas().style.cursor = 'pointer';
+              });
+              
+              // Change it back to grab when it leaves
+              map.on('mouseleave', renderOptions.layerId, () => {
+                map.getCanvas().style.cursor = 'grab';
+              });
+            }
+            
+            document.getElementById('status-info').textContent = 'Point data loaded successfully';
+          }
+        }
+
+        // Implementation for rendering line segments
+        async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
+          // Default options
+          const defaultOptions = {
+            sourceId: 'lines-source',
+            layerId: 'lines-layer',
+            lineWidth: 3,
+            lineOpacity: 0.8,
+            popupEnabled: true
+          };
+          
+          // Merge default options with provided options
+          const renderOptions = { ...defaultOptions, ...options };
+          
+          if (!lineData) {
+            try {
+              // Fetch data and wait for it
+              const rawData = await loadLineSegmentData();
+              
+              // Clean data if needed
+              lineData = cleanControlCharacters(rawData);
+            } catch (error) {
+              console.error('Failed to load or clean line segment data:', error);
+              document.getElementById('status-info').textContent = 'Error loading line data';
+              return;
+            }
+          }
+          
+          // Add the data source if it doesn't exist
+          if (!map.getSource(renderOptions.sourceId)) {
+            map.addSource(renderOptions.sourceId, {
+              type: 'geojson',
+              data: lineData
+            });
+          } else {
+            // Update the data if the source already exists
+            map.getSource(renderOptions.sourceId).setData(lineData);
+          }
+          
+          // Add the layer if it doesn't exist
+          if (!map.getLayer(renderOptions.layerId)) {
+            map.addLayer({
+              id: renderOptions.layerId,
+              type: 'line',
+              source: renderOptions.sourceId,
+              layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+              },
+              paint: {
+                'line-width': renderOptions.lineWidth,
+                'line-color': [
+                  'match',
+                  ['get', 'regulation_type'],
+                  '2 Hour Parking', '#e15759',
+                  'No Stopping', '#f28e2c',
+                  'ParkBoston/Metered', '#af7aa1',
+                  'Resident Parking', '#76b7b2',
+                  'Street Cleaning', '#ff9da7',
+                  'Tow Zone', '#9c755f',
+                  'Tow Zone: Street Cleaning/Snow Emergency', '#e7ba52',
+                  // Default color
+                  '#4e79a7'
+                ],
+                'line-opacity': renderOptions.lineOpacity
+              }
+            });
+            
+            // If popups are enabled, add click event
+            if (renderOptions.popupEnabled) {
+              // Create a popup but don't add it to the map yet
+              const popup = new mapboxgl.Popup({
+                closeButton: true,
+                closeOnClick: true
+              });
+              
+              // When a click event occurs on a feature in the lines layer, open a popup
+              map.on('click', renderOptions.layerId, (e) => {
+                if (e.features.length === 0) return;
+                
+                const feature = e.features[0];
+                const coordinates = e.lngLat;
+                const properties = feature.properties;
+                
+                // Format popup content
+                let popupContent = `<h3>${properties.regulation_type || 'Regulation'}</h3>`;
+                if (properties.mutcd_description) {
+                  popupContent += `<p>${properties.mutcd_description}</p>`;
+                }
+                if (properties.description) {
+                  popupContent += `<p>${properties.description}</p>`;
+                }
+                
+                popup
+                  .setLngLat(coordinates)
+                  .setHTML(popupContent)
+                  .addTo(map);
+              });
+              
+              // Change the cursor to a pointer when hovering over the lines layer
+              map.on('mouseenter', renderOptions.layerId, () => {
+                map.getCanvas().style.cursor = 'pointer';
+              });
+              
+              // Change it back to grab when it leaves
+              map.on('mouseleave', renderOptions.layerId, () => {
+                map.getCanvas().style.cursor = 'grab';
+              });
+            }
+            
+            document.getElementById('status-info').textContent = 'Line data loaded successfully';
+          }
+        }
+
+        // Function to load and render all data
+        async function loadAndRenderAllData() {
+          document.getElementById('status-info').textContent = 'Loading data...';
+          
+          try {
+            // Load points
+            await renderPointsOnMap(map);
+            
+            // Load lines
+            await renderLineSegmentsOnMap(map);
+            
+            document.getElementById('status-info').textContent = 'All data loaded successfully';
+          } catch (error) {
+            console.error('Error loading map data:', error);
+            document.getElementById('status-info').textContent = 'Error loading data';
+          }
+        }
