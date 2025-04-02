@@ -16,38 +16,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="map"></div>
-    <div class="control-panel">
-        <div id="title">Chinatown Curb Map v1</div>
-        
-        <div id="file-info"></div>
-        
-        <!-- Legend Section with Toggle Functionality -->
-        <div class="legend" id="legend" style="display: none;">
-            <p class="filter-title">Sign Types</p>
-            <div id="legend-items"></div>
-        </div>
-        
-        <!-- Line Segment Legend Section -->
-        <div class="segment-legend" id="segment-legend" style="display: none;">
-            <h4>Line Segment Legend</h4>
-            <div id="segment-legend-items"></div>
-        </div>
-        
-        <!-- Primary Layer Controls -->
-        <div id="layer-controls"></div>
-        
-        <!-- About this dataset -->
-        <div class="additional-layers" id="additional-layers">
-            <p class="filter-title">About the Data</p>
-            <p id="about">This is the first iteration of a map of all the curb regulations in Chinatown. <strong>Line segments</strong> represent distances betwen signposts, fire hydrants, parking meters, and curb cuts. These line segments will be used to calculate parking capacity in the future.
-            The <strong>circles</strong> represent individual parking signs. When you click on them, you will get details on each sign from <a href="https://cartegraph.com/">Cartegraph</a>. We will be enriching this data in Q2 2025.</p>
+<div id="map"></div>
 
-            <div id="additional-layer-items"></div>
-        </div>
-        <!--<div class="instructions">
-            <p><small>Click on any sign to view details. </small></p>
-        </div>-->
+<div class="control-panel" id="control-panel">
+    <!-- Handle for mobile drag interactions -->
+    <div class="panel-handle" id="panel-handle"></div>
+    
+    <!-- Mini header that remains visible when collapsed -->
+    <div class="mini-header" id="mini-header">
+        <div id="title">Chinatown Curb Map v1</div>
+        <div class="expand-icon">⌃</div>
+    </div>
+    <div id="non-mobile-title">Chinatown Curb Map v1</div>
+    <div id="file-info"></div>
+    
+    <!-- Legend Section with Toggle Functionality --> 
+    <div class="legend" id="legend" style="display: none;">
+        <p class="filter-title">Sign Types</p>
+        <div id="legend-items"></div>
+    </div>
+    
+    <!-- Line Segment Legend Section --> 
+    <div class="segment-legend" id="segment-legend" style="display: none;">
+        <h4>Line Segment Legend</h4>
+        <div id="segment-legend-items"></div>
+    </div>
+    
+    <!-- Primary Layer Controls --> 
+    <div id="layer-controls"></div>
+    
+    <!-- About this dataset (will be hidden on mobile) --> 
+    <div class="additional-layers" id="additional-layers">
+        <p class="filter-title">About the Data</p>
+        <p id="about">This is the first iteration of a map of all the curb regulations in Chinatown. <strong>Line segments</strong> represent distances betwen signposts, fire hydrants, parking meters, and curb cuts. These line segments will be used to calculate parking capacity in the future. The <strong>circles</strong> represent individual parking signs. When you click on them, you will get details on each sign from <a href="https://cartegraph.com/">Cartegraph</a>. We will be enriching this data in Q2 2025.</p>
+        <div id="additional-layer-items"></div>
     </div>
 
     <script src="./scripts/script.js"></script>

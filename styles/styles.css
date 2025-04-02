@@ -18,15 +18,23 @@ a {
 }
 
 #title {
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 600;
     color: #26507D;
+    margin-bottom: 10px;
+}
+
+#non-mobile-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #26507D;
+    margin-bottom: 10px;
 }
 
 .filter-title {
     font-size: 16px;
     font-weight: 600;
-    margin: 10px 0 10px 0;
+    margin: 10px 0 5px 0;
     color: #26507D;
 }
 
@@ -35,7 +43,7 @@ a {
     background: #f9f9f9;
     top: 10px;
     right: 10px;
-    padding: 20px;
+    padding: 15px;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(0,0,0,0.25);
     z-index: 1;
@@ -43,10 +51,6 @@ a {
     font-family: sans-serif;
     max-height: 90vh;
     overflow-y: auto;
-}
-
-#about {
-    line-height: 18px;
 }
 
 .file-input {
@@ -156,28 +160,17 @@ a {
 .legend-item {
     display: flex;
     align-items: center;
-    padding: 5px;
+    padding: 3px;
     cursor: pointer;
+    font-size: 14px;
 }
 
 .legend-color {
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
     margin-right: 5px;
     border-radius: 50%;
-}
-
-/* Additional layers section styles */
-.additional-layers {
-    margin-top: 10px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-}
-
-.additional-layer-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+    flex-shrink: 0;
 }
 
 /* Line segment legend styles */
@@ -198,4 +191,104 @@ a {
     width: 30px;
     height: 5px;
     margin-right: 5px;
+    flex-shrink: 0;
+}
+
+/* Toggle button for expanding/collapsing the control panel on mobile */
+/* Panel handle is hidden by default (for desktop) */
+.panel-handle {
+    display: none;
+    height: 5px;
+    width: 40px;
+    background: #ccc;
+    border-radius: 3px;
+    margin: 0 auto 10px;
+    cursor: grab;
+}
+
+/* Mini header is hidden by default (for desktop) */
+.mini-header {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+/* Responsive styles for mobile */
+/* Responsive styles for mobile */
+@media screen and (max-width: 768px) {
+    .control-panel {
+        width: calc(100% - 20px);
+        max-width: none;
+        max-height: 60vh;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 10px 10px 0 0;
+        transform: translateY(0); /* Panel starts fully visible */
+        transition: transform 0.3s ease-in-out;
+        padding: 15px 10px;
+    }
+
+    .legend {
+        border-top: none;
+    }
+
+    #non-mobile-title {
+        display: none;
+    }
+
+    /* Panel is COLLAPSED */
+    .control-panel.collapsed {
+        transform: translateY(calc(100% - 70px)); /* Push panel down */
+    }
+    
+    #title {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    
+    .filter-title {
+        font-size: 14px;
+        margin: 5px 0;
+    }
+    
+    .legend-item {
+        padding: 2px;
+        font-size: 12px;
+    }
+    
+    /* Handle for dragging the panel up/down */
+    .panel-handle {
+        height: 5px;
+        width: 40px;
+        background: #ccc;
+        border-radius: 3px;
+        margin: 0 auto 10px;
+        cursor: grab;
+    }
+    
+    /* Fixed mini header that stays visible when collapsed */
+    .mini-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding-bottom: 5px;
+    }
+    
+    /* Hide about data section on mobile only */
+    .additional-layers {
+        display: none;
+    }
+    
+    /* Make expand icon more prominent */
+    .expand-icon {
+        font-size: 26px;
+        font-weight: bold;
+    }
 }
