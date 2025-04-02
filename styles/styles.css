@@ -18,6 +18,12 @@ body {
     font-weight: 600;
 }
 
+#filter-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 5px 0 5px 0;
+}
+
 .control-panel {
     position: absolute;
     background: #f9f9f9;
