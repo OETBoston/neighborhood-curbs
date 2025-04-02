@@ -543,9 +543,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Function to update the expand icon
-  function updateExpandIcon() {
-    expandIcon.textContent = controlPanel.classList.contains('collapsed') ? '⌃' : '⌄';
-  }
+function updateExpandIcon() {
+  expandIcon.textContent = controlPanel.classList.contains('collapsed') ? '▲' : '▼'; // Solid triangles
+  // or
+  // expandIcon.textContent = controlPanel.classList.contains('collapsed') ? '▴' : '▾'; // Smaller triangles
+  // or
+  // expandIcon.textContent = controlPanel.classList.contains('collapsed') ? '↑' : '↓'; // Standard arrows
+}
 
   // Function to toggle the panel
   function togglePanel() {
