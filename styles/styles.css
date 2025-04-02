@@ -139,6 +139,7 @@ body {
     margin-top: 10px;
     border-top: 1px solid #ddd;
     padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .legend-item {
