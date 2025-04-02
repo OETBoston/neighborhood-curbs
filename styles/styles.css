@@ -288,7 +288,6 @@ a {
     
     /* Make expand icon more prominent */
     .expand-icon {
-        font-size: 26px;
-        font-weight: bold;
+        font-size: 18px;
     }
 }
