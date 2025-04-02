@@ -39,8 +39,7 @@ window.activeRegulationTypes = new Set([
   'Resident Parking',
   'Street Cleaning',
   'Tow Zone',
-  'Tow Zone: Street Cleaning/Snow Emergency',
-  'nan'
+  'Tow Zone: Street Cleaning/Snow Emergency'
 ]);
 
 // Your function to load point data
@@ -96,8 +95,7 @@ async function loadLineSegmentData() {
                 'Resident Parking': '#76b7b2',
                 'Street Cleaning': '#ff9da7',
                 'Tow Zone': '#9c755f',
-                'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52',
-                'nan': '#bab0ab'
+                'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52'
                 // Add more mappings as needed
             };
 
@@ -457,8 +455,7 @@ async function loadLineSegmentData() {
                     'Resident Parking': '#76b7b2',
                     'Street Cleaning': '#ff9da7',
                     'Tow Zone': '#9c755f',
-                    'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52',
-                    'nan': '#bab0ab'
+                    'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52'
                 };
             
           
