@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapbox GeoJSON Viewer</title>
+    <title>Chinatown Curb Regulations</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.15.0/mapbox-gl.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.15.0/mapbox-gl.css" rel="stylesheet" />
     <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="map"></div>
     <div class="control-panel">
-        <h3>Chinatown Curb Map</h3>
+        <div id="title">Chinatown Curb Map</div>
         
         <div id="file-info"></div>
         
@@ -32,18 +35,14 @@
         
         <!-- About this dataset -->
         <div class="additional-layers" id="additional-layers">
-            <h4>About this data set</h4>
-            <h5> This map is a first iteration of the a future map of all Chinatown Curb Regulations. Line segments represent distances betwen signposts, fire hydrants, parking meters and curb cuts. These line segments will be used to calculate curb capacity in the future. 
-
-            Click around on individual parking signs to see what data the city has stored in Cartegraph! We will be enriching this data in Q2. </h5>
+            <h4>About the Data</h4>
+            <p id="about"><i>This is the first iteration of a map of all the curb regulations in Chinatown. Line segments represent distances betwen signposts, fire hydrants, parking meters, and curb cuts. These line segments will be used to calculate parking capacity in the future.
+            Click on individual parking signs to see what data the city has stored in Cartegraph! We will be enriching this data in Q2 2025.</i></p>
 
             <div id="additional-layer-items"></div>
         </div>
         
         <div class="stats">
-            <p>Features: <span id="feature-count">0</span></p>
-            <p>Visible: <span id="visible-count">0</span></p>
-            <p>Loaded in: <span id="load-time">N/A</span></p>
             <p>Status: <span id="status-info">N/A</span></p>
         </div>
         
