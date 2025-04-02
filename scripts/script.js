@@ -24,6 +24,10 @@ map.addControl(
   }), 'top-left'
 );
 
+map.addControl(new mapboxgl.AttributionControl({
+  customAttribution: "Office of Emerging Technology"
+}));
+
 // Map on load event
 map.on('load', function() {
     console.log('Map loaded successfully');
