@@ -14,7 +14,6 @@ const map = new mapboxgl.Map({
 // Map on load event
 map.on('load', function() {
     console.log('Map loaded successfully');
-    document.getElementById('status-info').textContent = 'Ready to load data';
 
     // Automatically load data when map is ready
     loadAndRenderAllData();
@@ -168,7 +167,6 @@ async function loadLineSegmentData() {
               pointData = cleanControlCharacters(rawData);
             } catch (error) {
               console.error('Failed to load or clean point data:', error);
-              document.getElementById('status-info').textContent = 'Error loading point data';
               return;
             }
           }
@@ -259,7 +257,6 @@ async function loadLineSegmentData() {
                 map.getCanvas().style.cursor = 'grab';
               });
             }
-            document.getElementById('status-info').textContent = 'Point data loaded successfully';
          }
 
               // NEW CODE: Update the legend after points are rendered
@@ -301,8 +298,6 @@ async function loadLineSegmentData() {
               });
 
 
-            document.getElementById('status-info').textContent = 'Line data loaded successfully';
-
         // Implementation for rendering line segments
                 async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
                   // Default options
@@ -326,7 +321,6 @@ async function loadLineSegmentData() {
                       lineData = cleanControlCharacters(rawData);
                     } catch (error) {
                       console.error('Failed to load or clean line segment data:', error);
-                      document.getElementById('status-info').textContent = 'Error loading line data';
                       return;
                     }
                   }
@@ -384,7 +378,6 @@ async function loadLineSegmentData() {
 
         // Function to load and render all data
         async function loadAndRenderAllData() {
-          document.getElementById('status-info').textContent = 'Loading data...';
           
           try {
             // Load points
@@ -393,10 +386,8 @@ async function loadLineSegmentData() {
             // Load lines
             await renderLineSegmentsOnMap(map);
             
-            document.getElementById('status-info').textContent = 'All data loaded successfully';
           } catch (error) {
             console.error('Error loading map data:', error);
-            document.getElementById('status-info').textContent = 'Error loading data';
           }
         }
 
@@ -427,11 +418,8 @@ async function loadLineSegmentData() {
             // Apply the filter
             map.setFilter(linesLayerId, linesFilter);
         }
-        
-        // Update the status info
-        document.getElementById('status-info').textContent = 'Filter applied: ' + 
-            window.activeRegulationTypes.size + ' regulation types shown';
-        }
+      }
+
 
             // Update the legend with regulation types and colors with toggle functionality
             function updateLegend() {
