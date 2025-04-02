@@ -25,9 +25,22 @@ const isLocalDevelopment = true; // Change to false before publishing to GitHub
 
 // Define your data paths
 const localPointDataPath = './data/regulations_categorized.geojson';
-const locallinesegmentDataPath = './data/labeled_curbs.geojson';
+const localLineSegmentDataPath = './data/updated_labeled_curbs.geojson';
 const publishedPointDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/regulations_categorized.geojson';
-const publishedlinesegmentDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/labeled_curbs.geojson';
+const publishedLineSegmentDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/updated_labeled_curbs.geojson';
+
+// Initialize all regulation types as active
+window.activeRegulationTypes = new Set([
+  '2 Hour Parking',
+  'No Stopping',
+  'Other',
+  'ParkBoston/Metered',
+  'Resident Parking',
+  'Street Cleaning',
+  'Tow Zone',
+  'Tow Zone: Street Cleaning/Snow Emergency',
+  'nan'
+]);
 
 // Your function to load point data
 async function loadPointData() {
@@ -131,9 +144,6 @@ async function loadLineSegmentData() {
                       return [];
                     }
                   }
-                  
-                  // Step 4: Render the data
-                  // ...rendering code...
                 }
 
         // Complete implementation of renderPointsOnMap
@@ -250,87 +260,14 @@ async function loadLineSegmentData() {
                 map.getCanvas().style.cursor = 'grab';
               });
             }
-            
             document.getElementById('status-info').textContent = 'Point data loaded successfully';
-          }
+         }
+
+              // NEW CODE: Update the legend after points are rendered
+                updateLegend();
         }
 
-        // Implementation for rendering line segments
-        async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
-          // Default options
-          const defaultOptions = {
-            sourceId: 'lines-source',
-            layerId: 'lines-layer',
-            lineWidth: 3,
-            lineOpacity: 0.8,
-            popupEnabled: true
-          };
-          
-          // Merge default options with provided options
-          const renderOptions = { ...defaultOptions, ...options };
-          
-          if (!lineData) {
-            try {
-              // Fetch data and wait for it
-              const rawData = await loadLineSegmentData();
-              
-              // Clean data if needed
-              lineData = cleanControlCharacters(rawData);
-            } catch (error) {
-              console.error('Failed to load or clean line segment data:', error);
-              document.getElementById('status-info').textContent = 'Error loading line data';
-              return;
-            }
-          }
-          
-          // Add the data source if it doesn't exist
-          if (!map.getSource(renderOptions.sourceId)) {
-            map.addSource(renderOptions.sourceId, {
-              type: 'geojson',
-              data: lineData
-            });
-          } else {
-            // Update the data if the source already exists
-            map.getSource(renderOptions.sourceId).setData(lineData);
-          }
-          
-          // Add the layer if it doesn't exist
-          if (!map.getLayer(renderOptions.layerId)) {
-            map.addLayer({
-              id: renderOptions.layerId,
-              type: 'line',
-              source: renderOptions.sourceId,
-              layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-              },
-              paint: {
-                'line-width': renderOptions.lineWidth,
-                'line-color': [
-                  'match',
-                  ['get', 'regulation_type'],
-                  '2 Hour Parking', '#e15759',
-                  'No Stopping', '#f28e2c',
-                  'ParkBoston/Metered', '#af7aa1',
-                  'Resident Parking', '#76b7b2',
-                  'Street Cleaning', '#ff9da7',
-                  'Tow Zone', '#9c755f',
-                  'Tow Zone: Street Cleaning/Snow Emergency', '#e7ba52',
-                  // Default color
-                  '#4e79a7'
-                ],
-                'line-opacity': renderOptions.lineOpacity
-              }
-            });
-            
-            // If popups are enabled, add click event
-            if (renderOptions.popupEnabled) {
-              // Create a popup but don't add it to the map yet
-              const popup = new mapboxgl.Popup({
-                closeButton: true,
-                closeOnClick: true
-              });
-              
+        
               // When a click event occurs on a feature in the lines layer, open a popup
               map.on('click', renderOptions.layerId, (e) => {
                 if (e.features.length === 0) return;
@@ -353,7 +290,7 @@ async function loadLineSegmentData() {
                   .setHTML(popupContent)
                   .addTo(map);
               });
-              
+
               // Change the cursor to a pointer when hovering over the lines layer
               map.on('mouseenter', renderOptions.layerId, () => {
                 map.getCanvas().style.cursor = 'pointer';
@@ -363,11 +300,88 @@ async function loadLineSegmentData() {
               map.on('mouseleave', renderOptions.layerId, () => {
                 map.getCanvas().style.cursor = 'grab';
               });
-            }
-            
+
+
             document.getElementById('status-info').textContent = 'Line data loaded successfully';
+
+        // Implementation for rendering line segments
+                async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
+                  // Default options
+                  const defaultOptions = {
+                    sourceId: 'lines-source',
+                    layerId: 'lines-layer',
+                    lineWidth: 3,
+                    lineOpacity: 0.8,
+                    popupEnabled: true
+                  };
+                  
+                  // Merge default options with provided options
+                  const renderOptions = { ...defaultOptions, ...options };
+                  
+                  if (!lineData) {
+                    try {
+                      // Fetch data and wait for it
+                      const rawData = await loadLineSegmentData();
+                      
+                      // Clean data if needed
+                      lineData = cleanControlCharacters(rawData);
+                    } catch (error) {
+                      console.error('Failed to load or clean line segment data:', error);
+                      document.getElementById('status-info').textContent = 'Error loading line data';
+                      return;
+                    }
+                  }
+                  
+                  // Add the data source if it doesn't exist
+                  if (!map.getSource(renderOptions.sourceId)) {
+                    map.addSource(renderOptions.sourceId, {
+                      type: 'geojson',
+                      data: lineData
+                    });
+                  } else {
+                    // Update the data if the source already exists
+                    map.getSource(renderOptions.sourceId).setData(lineData);
+                  }
+                  
+                  // Add the layer if it doesn't exist
+                  if (!map.getLayer(renderOptions.layerId)) {
+                    map.addLayer({
+                      id: renderOptions.layerId,
+                      type: 'line',
+                      source: renderOptions.sourceId,
+                      layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                      },
+                      paint: {
+                        'line-width': renderOptions.lineWidth,
+                        'line-color': [
+                          'match',
+                          ['get', 'regulation_type'],
+                          '2 Hour Parking', '#e15759',
+                          'No Stopping', '#f28e2c',
+                          'ParkBoston/Metered', '#af7aa1',
+                          'Resident Parking', '#76b7b2',
+                          'Street Cleaning', '#ff9da7',
+                          'Tow Zone', '#9c755f',
+                          'Tow Zone: Street Cleaning/Snow Emergency', '#e7ba52',
+                          // Default color
+                          '#4e79a7'
+                        ],
+                        'line-opacity': renderOptions.lineOpacity
+                      }
+                    });
+                    
+                    // If popups are enabled, add click event
+                    if (renderOptions.popupEnabled) {
+                      // Create a popup but don't add it to the map yet
+                      const popup = new mapboxgl.Popup({
+                        closeButton: true,
+                        closeOnClick: true
+                      });
+                  }
+              }
           }
-        }
 
         // Function to load and render all data
         async function loadAndRenderAllData() {
@@ -386,3 +400,141 @@ async function loadLineSegmentData() {
             document.getElementById('status-info').textContent = 'Error loading data';
           }
         }
+
+    // Function to apply filter based on selected regulation types
+    function applyRegulationTypeFilter() {
+        // Safety check - make sure the map and layers exist
+        if (!map) return;
+        
+        // Check both layers (points and lines)
+        const pointsLayerId = 'points-layer';
+        const linesLayerId = 'lines-layer';
+        
+        // For points layer
+        if (map.getLayer(pointsLayerId)) {
+            // Create a filter expression for Mapbox
+            // This shows only features whose regulation_type is in the activeRegulationTypes set
+            const pointsFilter = ['in', ['get', 'regulation_type'], ['literal', [...window.activeRegulationTypes]]];
+            
+            // Apply the filter
+            map.setFilter(pointsLayerId, pointsFilter);
+        }
+        
+        // For lines layer
+        if (map.getLayer(linesLayerId)) {
+            // Create a filter expression for Mapbox
+            const linesFilter = ['in', ['get', 'regulation_type'], ['literal', [...window.activeRegulationTypes]]];
+            
+            // Apply the filter
+            map.setFilter(linesLayerId, linesFilter);
+        }
+        
+        // Update the status info
+        document.getElementById('status-info').textContent = 'Filter applied: ' + 
+            window.activeRegulationTypes.size + ' regulation types shown';
+        }
+
+            // Update the legend with regulation types and colors with toggle functionality
+            function updateLegend() {
+                const legendContainer = document.getElementById('legend-items');
+                if (!legendContainer) return; // Safety check
+                
+                legendContainer.innerHTML = '';
+                
+                // Show the legend section
+                const legendSection = document.getElementById('legend');
+                if (legendSection) {
+                    legendSection.style.display = 'block';
+                }
+                
+                // Use the regulation color map we already defined
+                const regulationColorMap = {
+                    '2 Hour Parking': '#e15759',
+                    'No Stopping': '#f28e2c',
+                    'Other': '#4e79a7',
+                    'ParkBoston/Metered': '#af7aa1',
+                    'Resident Parking': '#76b7b2',
+                    'Street Cleaning': '#ff9da7',
+                    'Tow Zone': '#9c755f',
+                    'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52',
+                    'nan': '#bab0ab'
+                };
+            
+                // Add "Select All/None" buttons
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'legend-buttons';
+                
+                const selectAllButton = document.createElement('button');
+                selectAllButton.textContent = 'Select All';
+                selectAllButton.className = 'legend-button';
+                selectAllButton.addEventListener('click', function() {
+                    // Select all checkboxes
+                    const checkboxes = legendContainer.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = true;
+                        window.activeRegulationTypes.add(cb.getAttribute('data-regulation'));
+                    });
+                    applyRegulationTypeFilter();
+                });
+                
+                const selectNoneButton = document.createElement('button');
+                selectNoneButton.textContent = 'Select None';
+                selectNoneButton.className = 'legend-button';
+                selectNoneButton.addEventListener('click', function() {
+                    // Unselect all checkboxes
+                    const checkboxes = legendContainer.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = false;
+                        window.activeRegulationTypes.delete(cb.getAttribute('data-regulation'));
+                    });
+                    applyRegulationTypeFilter();
+                });
+                
+                buttonContainer.appendChild(selectAllButton);
+                buttonContainer.appendChild(selectNoneButton);
+                legendContainer.appendChild(buttonContainer);
+                
+                // Sort regulation types alphabetically
+                const sortedRegulationTypes = Object.keys(regulationColorMap).sort();
+                
+                
+                // Add each regulation type to the legend with a checkbox
+                sortedRegulationTypes.forEach(regType => {
+                    const color = regulationColorMap[regType];
+                    const legendItem = document.createElement('div');
+                    legendItem.className = 'legend-item';
+                    
+                    // Create checkbox for toggling this regulation type
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = window.activeRegulationTypes.has(regType);
+                    checkbox.style.marginRight = '5px';
+                    checkbox.setAttribute('data-regulation', regType);
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            window.activeRegulationTypes.add(regType);
+                        } else {
+                            window.activeRegulationTypes.delete(regType);
+                        }
+                        
+                        // Apply the filter to show/hide regulation types
+                        applyRegulationTypeFilter();
+                    });
+                    
+                    const colorSwatch = document.createElement('span');
+                    colorSwatch.className = 'legend-color';
+                    colorSwatch.style.backgroundColor = color;
+                    colorSwatch.style.display = 'inline-block';
+                    colorSwatch.style.width = '15px';
+                    colorSwatch.style.height = '15px';
+                    colorSwatch.style.marginRight = '5px';
+                    
+                    const regTypeLabel = document.createElement('span');
+                    regTypeLabel.textContent = regType;
+                    
+                    legendItem.appendChild(checkbox);
+                    legendItem.appendChild(colorSwatch);
+                    legendItem.appendChild(regTypeLabel);
+                    legendContainer.appendChild(legendItem);
+                });
+            }

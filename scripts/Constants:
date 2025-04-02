@@ -1,0 +1,43 @@
+Constants:
+
+	mapboxgl.accessToken - Your Mapbox token
+
+	regulationColorMap - Mapping of regulation types to colors
+
+	defaultColor - Fallback color for features without a regulation type
+
+Core Functions:
+	Initialization:
+
+		initializeMap() - Sets up the Mapbox map with basic configuration
+		loadPointsData(url) - Fetches and loads point data from GeoJSON
+		loadLinesData(url) - Fetches and loads line segment data from GeoJSON
+
+	Data Processing:
+
+		cleanData(geojsonData) - Sanitizes incoming data (removes control characters, etc.)
+
+		calculateDistance(point1, point2) - Calculates distance between two points
+
+		findNearestPoint(lineEndpoint, pointFeatures) - Finds the nearest point to a line endpoint
+
+		assignRegulationToLines(lineFeatures, pointFeatures) - Assigns regulation types from nearest points to lines
+
+	Rendering:
+
+		addPointsToMap(pointsData) - Adds points to map with proper styling
+		addLinesToMap(linesData) - Adds lines to map with proper styling
+		getColorForRegulationType(regulationType) - Returns color based on regulation type
+		updateLegend(regulationTypes) - Updates the legend with regulation types and colors
+
+	Interaction:
+
+	setupPointClickHandlers() - Sets up click events for points to show details
+	setupLineClickHandlers() - Sets up click events for lines to show details
+	createPopup(feature) - Creates a popup with feature details
+	setupFiltering() - Sets up filtering controls for the map
+
+	Utilities:
+
+	getBounds(features) - Gets the bounding box for features to set the map view
+	updateVisibleCount() - Updates count of visible features
