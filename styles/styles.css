@@ -1,0 +1,176 @@
+body { 
+    margin: 0; 
+    padding: 0; 
+}
+
+#map { 
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    width: 100%; 
+}
+
+.control-panel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    z-index: 1;
+    max-width: 300px;
+    font-family: sans-serif;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-upload-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    background: #3887be;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.additional-file-upload-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    background: #38be7d;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.layer-control {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.layer-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.color-picker {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+}
+
+.mapboxgl-popup-content {
+    padding: 15px;
+}
+
+.instructions {
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+}
+
+/* Ensure the cursor changes appropriately */
+.mapboxgl-canvas-container.mapboxgl-interactive {
+    cursor: grab;
+}
+
+.mapboxgl-canvas-container.mapboxgl-interactive:active {
+    cursor: grabbing;
+}
+
+/* Add specific style for points */
+.point-hover {
+    cursor: pointer !important;
+}
+
+/* Filtering section styles */
+.filter-section {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.filter-section input {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+.filter-section button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    background: #3887be;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-section button:hover {
+    background: #2b6b99;
+}
+
+/* Legend styles */
+.legend {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.legend-color {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+/* Additional layers section styles */
+.additional-layers {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.additional-layer-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+/* Line segment legend styles */
+.segment-legend {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    display: none;
+}
+
+.segment-legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.segment-color {
+    width: 30px;
+    height: 5px;
+    margin-right: 5px;
+}
