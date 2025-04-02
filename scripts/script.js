@@ -461,39 +461,7 @@ async function loadLineSegmentData() {
                     'nan': '#bab0ab'
                 };
             
-                // Add "Select All/None" buttons
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'legend-buttons';
-                
-                const selectAllButton = document.createElement('button');
-                selectAllButton.textContent = 'Select All';
-                selectAllButton.className = 'legend-button';
-                selectAllButton.addEventListener('click', function() {
-                    // Select all checkboxes
-                    const checkboxes = legendContainer.querySelectorAll('input[type="checkbox"]');
-                    checkboxes.forEach(cb => {
-                        cb.checked = true;
-                        window.activeRegulationTypes.add(cb.getAttribute('data-regulation'));
-                    });
-                    applyRegulationTypeFilter();
-                });
-                
-                const selectNoneButton = document.createElement('button');
-                selectNoneButton.textContent = 'Select None';
-                selectNoneButton.className = 'legend-button';
-                selectNoneButton.addEventListener('click', function() {
-                    // Unselect all checkboxes
-                    const checkboxes = legendContainer.querySelectorAll('input[type="checkbox"]');
-                    checkboxes.forEach(cb => {
-                        cb.checked = false;
-                        window.activeRegulationTypes.delete(cb.getAttribute('data-regulation'));
-                    });
-                    applyRegulationTypeFilter();
-                });
-                
-                buttonContainer.appendChild(selectAllButton);
-                buttonContainer.appendChild(selectNoneButton);
-                legendContainer.appendChild(buttonContainer);
+          
                 
                 // Sort regulation types alphabetically
                 const sortedRegulationTypes = Object.keys(regulationColorMap).sort();
