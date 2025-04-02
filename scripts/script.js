@@ -325,7 +325,7 @@ async function loadLineSegmentData() {
                   const defaultOptions = {
                     sourceId: 'lines-source',
                     layerId: 'lines-layer',
-                    lineWidth: 4,
+                    lineWidth: 3,
                     lineOpacity: 0.8,
                     popupEnabled: true
                   };
