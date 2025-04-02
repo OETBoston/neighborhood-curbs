@@ -254,37 +254,7 @@ async function loadLineSegmentData() {
                 }
                 popupContent += `</div>`;
 
-                /*
-                // Format popup content
-                let popupContent = `<h3>${properties.regulation_type || 'Regulation'}</h3>`;
-                if (properties.mutcd_description) {
-                  popupContent += `<p>${properties.mutcd_description}</p>`;
-                }
-                if (properties.description) {
-                  popupContent += `<p>${properties.description}</p>`;
-                }
-                if (props.directionof_sign_arrow_field) {
-                            content += `<p><strong>Direction:</strong> ${props.directionof_sign_arrow_field}</p>`;
-                        }
-                if (props.special_sign_description_field) {
-                    content += `<p><strong>Description:</strong> ${props.special_sign_description_field}</p>`;
-                }
-                if (props.cartegraph_id) {
-                    content += `<p><strong>ID:</strong> ${props.cartegraph_id}</p>`;
-                }
-
-                // Add image thumbnail if available
-                if (props.attachment_public_url) {
-                    content += `<p><strong>Image:</strong><br>
-                        <a href="${props.attachment_public_url}" target="_blank">
-                            <img src="${props.attachment_public_url}" 
-                                style="max-width: 100%; max-height: 150px; margin-top: 5px; border: 1px solid #ccc;"
-                                alt="Sign photo">
-                        </a>
-                    </p>`;
-                }
-                content += `</div>`;
-            */ 
+                
                 // Ensure that if the map is zoomed out such that multiple
                 // copies of the feature are visible, the popup appears
                 // over the copy being pointed to
@@ -415,17 +385,73 @@ async function loadLineSegmentData() {
                         'line-opacity': renderOptions.lineOpacity
                       }
                     });
+                    }
+
+                  // If popups are enabled, add click event
+                  if (renderOptions.popupEnabled) {
+                    // Track current popup
+                    let currentPopup = null;
                     
-                    // If popups are enabled, add click event
-                    if (renderOptions.popupEnabled) {
-                      // Create a popup but don't add it to the map yet
+                    // Add click event to show popup
+                    map.on('click', renderOptions.layerId, (e) => {
+                      // Get the clicked feature
+                      const feature = e.features[0];
+                      const properties = feature.properties;
+                      
+                      // Close any existing popup
+                      if (currentPopup) {
+                        currentPopup.remove();
+                      }
+                      
+                      // Create a new popup
                       const popup = new mapboxgl.Popup({
                         closeButton: true,
-                        closeOnClick: true
+                        closeOnClick: true,
+                        maxWidth: '300px'
                       });
+                      
+                      // Store reference to the popup
+                      currentPopup = popup;
+                      
+                      // Build popup content
+                      let content = `<div style="font-family: sans-serif;">`;
+                      content += `<h3 style="margin-top: 0;">Line Segment</h3>`;
+                      
+                      // Add ID if available
+                      if (feature.id) {
+                        content += `<p><strong>ID:</strong> ${feature.id}</p>`;
+                      }
+                      
+                      // Add any available properties
+                      for (const [key, value] of Object.entries(properties)) {
+                        // Skip the color property we added
+                        if (key === 'segmentColor') continue;
+                        
+                        // Skip array or object values to keep the popup clean
+                        if (typeof value === 'object') continue;
+                        
+                        content += `<p><strong>${key}:</strong> ${value}</p>`;
+                      }
+                      
+                      content += `</div>`;
+                      
+                      // Set popup content and position
+                      popup.setLngLat(e.lngLat)
+                        .setHTML(content)
+                        .addTo(map);
+                    });
+                    
+                    // Change the cursor to a pointer when hovering over the lines
+                    map.on('mouseenter', renderOptions.layerId, () => {
+                      map.getCanvas().style.cursor = 'pointer';
+                    });
+                    
+                    // Change it back to grab when it leaves
+                    map.on('mouseleave', renderOptions.layerId, () => {
+                      map.getCanvas().style.cursor = 'grab';
+                    });
                   }
-              }
-          }
+                }
 
         // Function to load and render all data
         async function loadAndRenderAllData() {
