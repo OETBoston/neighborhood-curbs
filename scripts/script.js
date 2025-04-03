@@ -44,7 +44,6 @@ const publishedLineSegmentDataPath = 'https://raw.githubusercontent.com/OETBosto
 window.activeRegulationTypes = new Set([
   '2 Hour Parking',
   'No Stopping',
-  'Other',
   'Metered Parking',
   'Resident Parking',
   'Street Cleaning',
@@ -96,7 +95,6 @@ function getColorForRegulationType(regulationType) {
     const regulationColorMap = {
         '2 Hour Parking': '#e15759',
         'No Stopping': '#f28e2c',
-        'Other': '#4e79a7',
         'Metered Parking': '#af7aa1',
         'Resident Parking': '#76b7b2',
         'Street Cleaning': '#ff9da7',
@@ -471,7 +469,6 @@ function updateLegend() {
   const regulationColorMap = {
     '2 Hour Parking': '#e15759',
     'No Stopping': '#f28e2c',
-    'Other': '#4e79a7',
     'Metered Parking': '#af7aa1',
     'Resident Parking': '#76b7b2',
     'Street Cleaning': '#ff9da7',
