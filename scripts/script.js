@@ -49,7 +49,7 @@ window.activeRegulationTypes = new Set([
   'Resident Parking',
   'Street Cleaning',
   'Tow Zone',
-  'Tow Zone: Street Cleaning/Snow Emergency'
+  'Street Cleaning/Snow Emergency'
 ]);
 
 // Your function to load point data
@@ -101,7 +101,7 @@ function getColorForRegulationType(regulationType) {
         'Resident Parking': '#76b7b2',
         'Street Cleaning': '#ff9da7',
         'Tow Zone': '#9c755f',
-        'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52'
+        'Street Cleaning/Snow Emergency': '#e7ba52'
     };
 
     return regulationColorMap[regulationType] || '#4e79a7'; // Return the color or default
@@ -187,7 +187,7 @@ async function renderPointsOnMap(map, pointData = null, options = {}) {
           'Resident Parking', '#76b7b2',
           'Street Cleaning', '#ff9da7',
           'Tow Zone', '#9c755f',
-          'Tow Zone: Street Cleaning/Snow Emergency', '#e7ba52',
+          'Street Cleaning/Snow Emergency', '#e7ba52',
           // Default color
           '#4e79a7'
         ],
@@ -331,7 +331,7 @@ async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
           'Resident Parking', '#76b7b2',
           'Street Cleaning', '#ff9da7',
           'Tow Zone', '#9c755f',
-          'Tow Zone: Street Cleaning/Snow Emergency', '#e7ba52',
+          'Street Cleaning/Snow Emergency', '#e7ba52',
           // Default color
           '#4e79a7'
         ],
@@ -476,7 +476,7 @@ function updateLegend() {
     'Resident Parking': '#76b7b2',
     'Street Cleaning': '#ff9da7',
     'Tow Zone': '#9c755f',
-    'Tow Zone: Street Cleaning/Snow Emergency': '#e7ba52'
+    'Street Cleaning/Snow Emergency': '#e7ba52'
   };
 
   // Sort regulation types alphabetically
