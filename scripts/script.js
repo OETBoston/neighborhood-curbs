@@ -70,6 +70,31 @@ async function loadPointData() {
   }
 }
 
+async function loadLineSegmentData() {
+  // Choose the right path based on environment
+  const lineSegmentDataPath = isLocalDevelopment ? localLineSegmentDataPath : publishedLineSegmentDataPath;
+  
+  try {
+    const response = await fetch(lineSegmentDataPath);
+    if (!response.ok) {
+      throw new Error(`Failed to load line segment data: ${response.status}`);
+    }
+    const data = await response.json();
+    
+    // Add logging here
+    console.log('Line segment data loaded:');
+    console.log('Total features:', data.features ? data.features.length : 'No features array');
+    console.log('Sample feature:', data.features && data.features.length > 0 ? data.features[0] : 'No features');
+    
+    return data;
+  } catch (error) {
+    console.error('Error loading line segment data:', error);
+    // Either rethrow the error
+    throw error;
+  }
+}
+
+/*
 // Your function to load line segment data
 async function loadLineSegmentData() {
   // Choose the right path based on environment
@@ -88,7 +113,7 @@ async function loadLineSegmentData() {
     throw error;
   }
 }
-
+*/
 // Function to map regulation types to colors
 function getColorForRegulationType(regulationType) {
     // Create a mapping of regulation types to your professional colors
