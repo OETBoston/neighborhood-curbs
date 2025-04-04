@@ -158,6 +158,11 @@ a {
     border-radius: 4px;
 }
 
+margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
 .filter-section .filter-title {
     font-size: 16px;
     font-weight: 600;
@@ -167,10 +172,12 @@ a {
 
 /* Legend styles */
 .legend {
+    width: 100%;
     margin-top: 10px;
     border-top: 1px solid #ddd;
     padding-top: 5px;
     padding-bottom: 5px;
+    box-sizing: border-box;
 }
 
 .legend-item {
@@ -208,6 +215,14 @@ a {
     height: 5px;
     margin-right: 5px;
     flex-shrink: 0;
+}
+
+.filter-dropdown {
+    width: 100%;
+    border-top: 2px solid #ddd;
+    padding-top: 2px;
+    padding-bottom: 5px;
+    box-sizing: border-box;
 }
 
 /* Toggle button for expanding/collapsing the control panel on mobile */
@@ -251,6 +266,7 @@ a {
     }
 
     .legend {
+        width: 100%;
         border-top: none;
     }
 
