@@ -40,10 +40,12 @@ const localLineSegmentDataPath = './data/updated_labeled_curbs.geojson';
 const publishedPointDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/regulations_categorized.geojson';
 const publishedLineSegmentDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/updated_labeled_curbs.geojson';
 
+let hoveredPointId = null;
+
 // Initialize all regulation types as active
 window.activeRegulationTypes = new Set([
   '2 Hour Parking',
-  'No Stopping',
+  'No Stopping ',
   'Metered Parking',
   'Resident Parking',
   'Street Cleaning',
@@ -99,9 +101,9 @@ function getColorForRegulationType(regulationType) {
     // Create a mapping of regulation types to your professional colors
     const regulationColorMap = {
         '2 Hour Parking': '#e15759',
-        'No Stopping': '#f28e2c',
+        'No Stopping ': '#76b7b2',
         'Metered Parking': '#af7aa1',
-        'Resident Parking': '#76b7b2',
+        'Resident Parking': '#f28e2c',
         'Street Cleaning': '#ff9da7',
         'Tow Zone': '#9c755f',
         'Street Cleaning/Snow Emergency': '#e7ba52'
@@ -134,6 +136,7 @@ function cleanControlCharacters(geojsonData) {
   
   return cleanedData;
 }
+
 
 // Complete implementation of renderPointsOnMap
 async function renderPointsOnMap(map, pointData = null, options = {}) {
@@ -185,9 +188,9 @@ async function renderPointsOnMap(map, pointData = null, options = {}) {
           'match',
           ['get', 'regulation_type'],
           '2 Hour Parking', '#e15759',
-          'No Stopping', '#f28e2c',
+          'No Stopping ', '#76b7b2',
           'Metered Parking', '#af7aa1',
-          'Resident Parking', '#76b7b2',
+          'Resident Parking', '#f28e2c',
           'Street Cleaning', '#ff9da7',
           'Tow Zone', '#9c755f',
           'Street Cleaning/Snow Emergency', '#e7ba52',
@@ -275,6 +278,7 @@ async function renderPointsOnMap(map, pointData = null, options = {}) {
   updateLegend();
 }
 
+
 async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
   console.log('Starting to render line segments');
   
@@ -339,9 +343,9 @@ async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
           'match',
           ['get', 'regulation_type'],
           '2 Hour Parking', '#e15759',
-          'No Stopping', '#f28e2c',
+          'No Stopping ', '#76b7b2',
           'Metered Parking', '#af7aa1',
-          'Resident Parking', '#76b7b2',
+          'Resident Parking', '#f28e2c',
           'Street Cleaning', '#ff9da7',
           'Tow Zone', '#9c755f',
           'Street Cleaning/Snow Emergency', '#e7ba52',
@@ -492,9 +496,9 @@ function updateLegend() {
   // Use the regulation color map we already defined
   const regulationColorMap = {
     '2 Hour Parking': '#e15759',
-    'No Stopping': '#f28e2c',
     'Metered Parking': '#af7aa1',
-    'Resident Parking': '#76b7b2',
+    'No Stopping ': '#76b7b2',
+    'Resident Parking': '#f28e2c',
     'Street Cleaning': '#ff9da7',
     'Tow Zone': '#9c755f',
     'Street Cleaning/Snow Emergency': '#e7ba52'
