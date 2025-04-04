@@ -149,6 +149,22 @@ a {
     background: #2b6b99;
 }
 
+.filter-section select {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.filter-section .filter-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 10px 0 5px 0;
+    color: #26507D;
+}
+
 /* Legend styles */
 .legend {
     margin-top: 10px;

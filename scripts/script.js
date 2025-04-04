@@ -40,7 +40,8 @@ const localLineSegmentDataPath = './data/updated_labeled_curbs.geojson';
 const publishedPointDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/regulations_categorized.geojson';
 const publishedLineSegmentDataPath = 'https://raw.githubusercontent.com/OETBoston/neighborhood-curbs/refs/heads/main/data/updated_labeled_curbs.geojson';
 
-let hoveredPointId = null;
+let activeMutcdDescription = null;
+let mutcdDescriptions = new Set(); // Will hold unique descriptions
 
 // Initialize all regulation types as active
 window.activeRegulationTypes = new Set([
@@ -70,6 +71,45 @@ async function loadPointData() {
     // Either rethrow the error
     throw error;
   }
+}
+
+function populateMutcdDropdown(pointData) {
+  // Clear the set first
+  mutcdDescriptions.clear();
+  
+  // Extract unique MUTCD descriptions from point data
+  pointData.features.forEach(feature => {
+    if (feature.properties && feature.properties.mutcd_description) {
+      // Add non-empty descriptions to the set
+      const description = feature.properties.mutcd_description.trim();
+      if (description) {
+        mutcdDescriptions.add(description);
+      }
+    }
+  });
+  
+  // Get the dropdown element
+  const dropdown = document.getElementById('mutcd-filter');
+  if (!dropdown) return;
+  
+  // Clear existing options (except the first "Show All" option)
+  while (dropdown.options.length > 1) {
+    dropdown.remove(1);
+  }
+  
+  // Add sorted descriptions to dropdown
+  [...mutcdDescriptions].sort().forEach(description => {
+    const option = document.createElement('option');
+    option.value = description;
+    option.textContent = description;
+    dropdown.appendChild(option);
+  });
+  
+  // Add change event listener
+  dropdown.addEventListener('change', function() {
+    activeMutcdDescription = this.value;
+    applyFilters();
+  });
 }
 
 async function loadLineSegmentData() {
@@ -174,6 +214,11 @@ async function renderPointsOnMap(map, pointData = null, options = {}) {
   } else {
     // Update the data if the source already exists
     map.getSource(renderOptions.sourceId).setData(pointData);
+  }
+
+  // After data is loaded and before returning
+  if (pointData && pointData.features) {
+    populateMutcdDropdown(pointData);
   }
   
   // Step 5: Add the layer if it doesn't exist
@@ -451,6 +496,46 @@ async function loadAndRenderAllData() {
   }
 }
 
+// New function to apply all filters
+function applyFilters() {
+  // Get layer IDs
+  const pointsLayerId = 'points-layer';
+  const linesLayerId = 'lines-layer';
+  
+  // Safety check - make sure the map and layers exist
+  if (!map) return;
+  
+  // If MUTCD description is selected
+  if (activeMutcdDescription) {
+    // Filter points by MUTCD description
+    const mutcdFilter = ['==', ['get', 'mutcd_description'], activeMutcdDescription];
+    
+    // Apply filter to points
+    if (map.getLayer(pointsLayerId)) {
+      map.setFilter(pointsLayerId, mutcdFilter);
+    }
+    
+    // Hide lines layer completely
+    if (map.getLayer(linesLayerId)) {
+      map.setLayoutProperty(linesLayerId, 'visibility', 'none');
+    }
+  } else {
+    // No MUTCD filter - apply regulation type filters
+    if (map.getLayer(pointsLayerId)) {
+      const pointsFilter = ['in', ['get', 'regulation_type'], ['literal', [...window.activeRegulationTypes]]];
+      map.setFilter(pointsLayerId, pointsFilter);
+    }
+    
+    // Show and filter lines layer
+    if (map.getLayer(linesLayerId)) {
+      map.setLayoutProperty(linesLayerId, 'visibility', 'visible');
+      const linesFilter = ['in', ['get', 'regulation_type'], ['literal', [...window.activeRegulationTypes]]];
+      map.setFilter(linesLayerId, linesFilter);
+    }
+  }
+}
+
+
 // Function to apply filter based on selected regulation types
 function applyRegulationTypeFilter() {
   // Safety check - make sure the map and layers exist
@@ -478,6 +563,7 @@ function applyRegulationTypeFilter() {
     // Apply the filter
     map.setFilter(linesLayerId, linesFilter);
   }
+  applyFilters();
 }
 
 // Update the legend with regulation types and colors with toggle functionality
