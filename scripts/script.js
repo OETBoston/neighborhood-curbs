@@ -94,26 +94,6 @@ async function loadLineSegmentData() {
   }
 }
 
-/*
-// Your function to load line segment data
-async function loadLineSegmentData() {
-  // Choose the right path based on environment
-  const lineSegmentDataPath = isLocalDevelopment ? localLineSegmentDataPath : publishedLineSegmentDataPath;
-  
-  try {
-    const response = await fetch(lineSegmentDataPath);
-    if (!response.ok) {
-      throw new Error(`Failed to load line segment data: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error loading line segment data:', error);
-    // Either rethrow the error
-    throw error;
-  }
-}
-*/
 // Function to map regulation types to colors
 function getColorForRegulationType(regulationType) {
     // Create a mapping of regulation types to your professional colors
@@ -295,8 +275,9 @@ async function renderPointsOnMap(map, pointData = null, options = {}) {
   updateLegend();
 }
 
-// Implementation for rendering line segments
 async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
+  console.log('Starting to render line segments');
+  
   // Default options
   const defaultOptions = {
     sourceId: 'lines-source',
@@ -316,11 +297,15 @@ async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
       
       // Clean data if needed
       lineData = cleanControlCharacters(rawData);
+      console.log('Line data after cleaning:', lineData.features.length);
     } catch (error) {
       console.error('Failed to load or clean line segment data:', error);
       return;
     }
   }
+  
+  // Log before adding the source
+  console.log('About to add/update source with line data');
   
   // Add the data source if it doesn't exist
   if (!map.getSource(renderOptions.sourceId)) {
@@ -328,10 +313,15 @@ async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
       type: 'geojson',
       data: lineData
     });
+    console.log('Created new source for line data');
   } else {
     // Update the data if the source already exists
     map.getSource(renderOptions.sourceId).setData(lineData);
+    console.log('Updated existing source with new line data');
   }
+  
+  // Log before adding the layer
+  console.log('About to add/check layer for line data');
   
   // Add the layer if it doesn't exist
   if (!map.getLayer(renderOptions.layerId)) {
@@ -361,9 +351,13 @@ async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
         'line-opacity': renderOptions.lineOpacity
       }
     });
+    console.log('Created new layer for line data');
+  } else {
+    console.log('Line layer already exists');
   }
 
-  // If popups are enabled, add click event
+  // all above it new 
+// If popups are enabled, add click event
   if (renderOptions.popupEnabled) {
     // Track current popup
     let currentPopup = null;
@@ -429,7 +423,12 @@ async function renderLineSegmentsOnMap(map, lineData = null, options = {}) {
       map.getCanvas().style.cursor = 'grab';
     });
   }
+  
+  console.log('Line segments rendering complete');
 }
+
+
+  
 
 // Function to load and render all data
 async function loadAndRenderAllData() {
