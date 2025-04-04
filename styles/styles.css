@@ -219,8 +219,7 @@ margin-top: 10px;
 
 .filter-dropdown {
     width: 100%;
-    border-top: 2px solid #ddd;
-    padding-top: 2px;
+    padding-top: 5px;
     padding-bottom: 5px;
     box-sizing: border-box;
 }
@@ -277,6 +276,10 @@ margin-top: 10px;
     /* Panel is COLLAPSED */
     .control-panel.collapsed {
         transform: translateY(calc(100% - 70px)); /* Push panel down */
+    }
+
+    #mutcd-filter-section {
+        display: none;
     }
     
     #title {
